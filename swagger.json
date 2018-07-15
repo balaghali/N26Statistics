@@ -1,0 +1,103 @@
+
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.1",
+    "title": "VertxStatistics",
+    "description": "A sample API that uses a vertx statistics as an example to demonstrate features in the swagger-2.0 specification",
+    "termsOfService": "http://testHost/terms/",
+    "contact": {
+      "name": "Bala"
+    },
+    "license": {
+      "name": "Public"
+    }
+  },
+  "host": "localhost",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/statistics": {
+      "get": {
+        "description": "Returns all stats with in last minute",
+        "operationId": "getStatistics",
+        "produces": [
+          "application/json"
+          ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "statistics response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/Statistics"
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/ErrorModel"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Creates a new transaction",
+        "operationId": "createTransaction",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "amount",
+            "in": "body",
+            "description": "Double value of the transaction",
+            "required": true,
+            "schema": {
+              "$ref": "#/Transaction"
+            }
+          },
+		  {
+            "name": "timestamp",
+            "in": "body",
+            "description": "Long value that specifies the time of the transaction",
+            "required": true,
+            "schema": {
+              "$ref": "#/Transaction"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "created",
+            "schema": {
+              "$ref": "#/transaction"
+            }
+          },
+		  "204": {
+            "description": "not created",
+            "schema": {
+              "$ref": "#/transaction"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/ErrorModel"
+            }
+          }
+        }
+      }
+    }
+   }
+}
