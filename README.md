@@ -1,4 +1,4 @@
-# REST API to calculate statistics of transactions from the last 60 seconds
+# REST API to calculate statistics of transactions with in last 60 seconds
 
 Build a REST API to calculate real time statistics from the last 60 seconds.
 There will be two APIs, one of them is called every time a transaction is made. It is also the sole input of this RESTful API.
@@ -6,7 +6,7 @@ The other one returns the statistic based of the transactions of the last 60 sec
  
 POST /transactions
 
-Every Time a new transaction happened, this endpoint will be invoked.
+Every Time a new transaction happens, this endpoint will be invoked.
 
 JSON Body:
 {
@@ -21,8 +21,7 @@ Where:
 Returns: 
 Empty body with either 201 or 204.
 * 201 - in case of success
-* 204 - if transaction is older than 60 seconds
-* 400 - in case invalid json is sent
+* 204 - if transaction is older than 60 seconds or invalid json
 
 GET /statistics
 
@@ -111,8 +110,7 @@ java -jar jarName-0.1.snapshot-fat.jar
 
 Swagger json
 ----
-swagger.json file is included to document the rest api's in Swagger UI   
-This swagger template is generated from open source tools  
+swagger.json file is included to document the rest api's in Swagger UI , this swagger template is generated from open source tools  
 
 
 #Introduction to Vert.x
@@ -125,11 +123,15 @@ Vert.x is a tool-kit for building reactive applications on the JVM.
 
 "Toolkit" means that it's lightweight. It could be embedded in your current application without changing the structure. Another significant word is reactive. Vert.x is made to build reactive systems. Reactive system has been defined in the Reactive Manifesto. We could summarize it in 4 points:
 
-** Responsive :** The system responds in a timely manner if at all possible.
-** Resilient :** The system stays responsive in the face of failure (e.g. internal error).
-** Elastic :** The system stays responsive under varying workload.
-** Message Driven:** The components of the system communicate with each other using asynchronous message-passing.
-Vert.x is event driven and non-blocking. First, let's introduce Event Loop thread. Event loops are a group of threads that are responsible for dispatching and handling events in Handler. Every event is delivered and handled in an event loop. Notice, we must never block the event loop or our application will not be responsive as the process of handling events will be blocked. When building Vert.x applications, we should keep the asynchronous and non-blocking model in mind, rather than traditional blocking model. We will see the detail in the following sections.
+`Responsive` : The system responds in a timely manner if at all possible.
+
+`Resilient` : The system stays responsive in the face of failure (e.g. internal error).
+
+`Elastic` : The system stays responsive under varying workload.
+
+`Message Driven` : The components of the system communicate with each other using asynchronous message-passing.
+
+Vert.x is event driven and non-blocking. First, let's introduce Event Loop thread. Event loops are a group of threads that are responsible for dispatching and handling events in Handler. Every event is delivered and handled in an event loop. Notice, we must never block the event loop or our application will not be responsive as the process of handling events will be blocked. When building Vert.x applications, we should keep the asynchronous and non-blocking model in mind, rather than traditional blocking model. 
 
 ##Concurrency
 -

@@ -34,7 +34,6 @@ import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 
-
 @RunWith(VertxUnitRunner.class)
 public class TestRestAPIVerticle {
     private Vertx vertx;
@@ -70,9 +69,9 @@ public class TestRestAPIVerticle {
     }
 
     /**
-     * Given 
-     * When
-     * Then
+     * Given Vertx instance with verticle running  
+     * When a request is fired on default path / 
+     * Then Assert than response body has welcome message
      * @param context
      */
     @Test
@@ -112,7 +111,6 @@ public class TestRestAPIVerticle {
             .end();
     }
     
-    
     /**
      * Given a json input request with invalid inputs (timestamp older than 60 seconds)
      * When a rest request to add a new transaction is perfomred
@@ -137,7 +135,6 @@ public class TestRestAPIVerticle {
             .write(json)
             .end();
     }
-    
     
     /**
      * Given a json input request with invalid inputs (timestamp older than 60 seconds)
@@ -170,33 +167,24 @@ public class TestRestAPIVerticle {
         List<ITransaction> transactionList = 
 		IntStream.rangeClosed(1, numberOfTransactions).mapToObj(e -> {
 			ITransaction transaction = TransactionFactory.getTransaction(234.2+e, new Date().getTime());
-			final String json = Json.encodePrettily(transaction);
-			createTransaction(context, json);
+			mStatisticsService.computeTransaction(transaction);
+			sleep();
 			return transaction;
 		}).collect(Collectors.toList());
 				
 		return transactionList.stream().mapToDouble(e -> e.getAmount()).summaryStatistics();
 	}
 
-	private void createTransaction(TestContext context, final String json) {
-		vertx.createHttpClient().post(port, "localhost", ADD_TRANSACTION_END_POINT)
-        .putHeader("Content-Type", "application/json")
-        .putHeader("Content-Length", Integer.toString(json.length()))
-        .handler(response -> {
-            context.assertEquals(response.statusCode(), 201);
-            response.bodyHandler(body -> {
-            	 context.assertEquals(body.toString(), "");
-            	 context.async().complete();
-            });
-        })
-        .write(json)
-        .end();
-		
-		// Sleep for 5 ms to create new transaction timestamp
+	private void sleep() {
+		// Sleep for 75 ms to create new transaction timestamp
 		try {
 			Thread.sleep(75);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
 	}
+
+	
+	
 }
