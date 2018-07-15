@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+/**
+ * Util class to provide supplement methods for DateTime calculation 
+ */
 public class CustomDateTimeUtils {
 
     public static boolean isTransactionOlderThanMinute(Long ts) {

@@ -22,6 +22,7 @@ Returns:
 Empty body with either 201 or 204.
 * 201 - in case of success
 * 204 - if transaction is older than 60 seconds
+* 400 - in case invalid json is sent
 
 GET /statistics
 
@@ -108,7 +109,7 @@ To run the fat jar use following command and access the localhost:8080/
 
 java -jar jarName-0.1.snapshot-fat.jar 
 
-##Swagger json
+Swagger json
 ----
 swagger.json file is included to document the rest api's in Swagger UI   
 This swagger template is generated from open source tools  

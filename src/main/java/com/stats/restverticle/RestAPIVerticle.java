@@ -1,11 +1,10 @@
 package com.stats.restverticle;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.stats.restservice.external.services.IStatisticsService;
 import com.stats.restservice.external.services.ITransactionService;
-import com.stats.restservice.transaction.ITransaction;
-import com.stats.restservice.transaction.TransactionFactory;
 
 import io.vertx.config.ConfigRetriever;
 import io.vertx.core.AbstractVerticle;
@@ -35,6 +34,9 @@ public class RestAPIVerticle extends AbstractVerticle {
 		mStatistcsService = statisticsService;
 	}
 
+	/**
+	 * Invoked when this verticle is deployed. (Life cycle method to start the verticle) 
+	 */
 	@Override
 	public void start(Future<Void> fut) {
 	
@@ -82,7 +84,11 @@ public class RestAPIVerticle extends AbstractVerticle {
 	        }
 	    );
 	}
-
+	
+	/**
+	 * Blocking call to fetch the statistics in case if there is humungous input traffic, avoid blocking the event loop thread
+	 * @param routingContext
+	 */
 	private void getStats(RoutingContext routingContext) {
 		vertx.executeBlocking(future -> {
 		    future.complete(mStatistcsService.getStatistics());
@@ -100,13 +106,11 @@ public class RestAPIVerticle extends AbstractVerticle {
 		        .end();
 		    }
 		});
-		
-	    
 	}
 	
 	private void addTransaction(RoutingContext routingContext) {
-		ITransaction transaction = getTransactionFromRequestBody(routingContext);
-	    Optional<Boolean> status = mTransactionService.processTransaction(transaction);
+		Supplier<JsonObject> jsonData =  () -> routingContext.getBodyAsJson();
+	    Optional<Boolean> status = mTransactionService.unMarshallTransactionData(jsonData);
 			if (status.isPresent()) {
 				sendResponeWithStatus(routingContext,201); 
 			} else {
@@ -114,20 +118,6 @@ public class RestAPIVerticle extends AbstractVerticle {
 			}
 	}
 
-	private ITransaction getTransactionFromRequestBody(RoutingContext routingContext) {
-		ITransaction transaction = null;
-		try {
-			JsonObject bodyAsJson = routingContext.getBodyAsJson();
-			Double amount = Double.parseDouble(String.valueOf(bodyAsJson.getValue("amount")));
-			Long timestamp = Long.parseLong(String.valueOf(bodyAsJson.getValue("timestamp")));
-			transaction = TransactionFactory.getTransaction(amount , timestamp);
-		} catch (Exception e) {
-			logger.info("Encountered exception while parsing data");
-		}
-		return transaction;
-	}
-	
-	
 	private void sendResponeWithStatus(RoutingContext routingContext , int statusCode) {
 		routingContext.response().setStatusCode(statusCode).putHeader(CONTENT_TYPE, APPLICATION_JSON_CHARSET_UTF_8)
 				.end();

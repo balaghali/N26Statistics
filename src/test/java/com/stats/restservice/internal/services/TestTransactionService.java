@@ -2,6 +2,7 @@ package com.stats.restservice.internal.services;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,7 +10,8 @@ import org.mockito.Mockito;
 
 import com.stats.restservice.external.services.ITransactionService;
 import com.stats.restservice.transaction.ITransaction;
-import com.stats.restservice.transaction.TransactionFactory;
+
+import io.vertx.core.json.JsonObject;
 
 
 public class TestTransactionService {
@@ -25,13 +27,12 @@ public class TestTransactionService {
 		  StatisticsServiceImpl spiedStatisticsService = Mockito.spy(statisticsService);
 		  ITransactionService transactionService = new TransactionServiceImpl(statisticsService);
 		  
-		  Optional<Boolean> status = transactionService.processTransaction((getTransaction(10.5, System.currentTimeMillis() - 60000)));
+		  Optional<Boolean> status = transactionService.unMarshallTransactionData(getTransactionJson(10.5, System.currentTimeMillis() - 60000));
 		  Assert.assertEquals(Optional.empty(), status);
 
-		  status = transactionService.processTransaction((getTransaction(12.5, System.currentTimeMillis() - 60000)));
+		  status = transactionService.unMarshallTransactionData((getTransactionJson(12.5, System.currentTimeMillis() - 60000)));
 		  Assert.assertEquals(Optional.empty(), status);
 
-		  
 	      Mockito.verify(spiedStatisticsService, Mockito.never()).computeTransaction(Mockito.any(ITransaction.class));
 	  }
 	  
@@ -47,14 +48,13 @@ public class TestTransactionService {
 			  StatisticsServiceImpl spiedStatisticsService = Mockito.spy(statisticsService);
 			  ITransactionService transactionService = new TransactionServiceImpl(spiedStatisticsService);
 			  
-			  Optional<Boolean> status = transactionService.processTransaction((getTransaction(10.5, new Date().getTime())));
+			  Optional<Boolean> status = transactionService.unMarshallTransactionData((getTransactionJson(10.5, new Date().getTime())));
 			  Assert.assertEquals(true, status.get().booleanValue());
-			  status = transactionService.processTransaction((getTransaction(12.5, new Date().getTime())));
+			  status = transactionService.unMarshallTransactionData((getTransactionJson(12.5, new Date().getTime())));
 			  Assert.assertEquals(true, status.get().booleanValue());
 			  
 		      Mockito.verify(spiedStatisticsService, Mockito.times(2)).computeTransaction(Mockito.any(ITransaction.class));
 		  }
-		  
 		  
 		  /**
 			 * Given - Statistics Service and Transactionservice 
@@ -66,15 +66,18 @@ public class TestTransactionService {
 				  StatisticsServiceImpl statisticsService = new StatisticsServiceImpl();
 				  ITransactionService transactionService = new TransactionServiceImpl(statisticsService);
 				  
-				  Optional<Boolean> status = transactionService.processTransaction((getTransaction(null, null)));
+				  Optional<Boolean> status = transactionService.unMarshallTransactionData((getTransactionJson(null, null)));
 				  Assert.assertEquals(Optional.empty(), status);
-				  status = transactionService.processTransaction(null);
+				  status = transactionService.unMarshallTransactionData(JsonObject::new);
 				  Assert.assertEquals(Optional.empty(), status);
 				  
 			  }
 	  
-	  private ITransaction getTransaction(Double doubleValue, Long time) {
-			return TransactionFactory.getTransaction(doubleValue, time);
-		}
+	  private Supplier<JsonObject> getTransactionJson(Double doubleValue, Long time) {
+		  JsonObject jsonData = new JsonObject();
+		  jsonData.put("amount", doubleValue);
+		  jsonData.put("timestamp", time);
+		return () -> jsonData;
+	}
 
 }

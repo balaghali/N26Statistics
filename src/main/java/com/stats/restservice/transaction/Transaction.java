@@ -1,5 +1,8 @@
 package com.stats.restservice.transaction;
 
+/**
+ * Transaction POJO class associated with received data to create transactions 
+ */
 public class Transaction implements ITransaction{
 	
 	private Double amount;

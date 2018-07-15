@@ -5,6 +5,12 @@ package com.stats.restservice.transaction;
  */
 public class TransactionFactory {
 	
+	/**
+	 * Method to instantiate new transaction with given inputs
+	 * @param amount
+	 * @param dateTimeStamp
+	 * @return
+	 */
 	public static ITransaction getTransaction(Double amount , Long dateTimeStamp) {
 		ITransaction transaction = new Transaction(amount , dateTimeStamp);
 		return transaction;

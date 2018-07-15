@@ -35,6 +35,9 @@ public class PeriodicCleanerVerticle extends AbstractVerticle{
 		mDelay = delay > 0 ? delay : mDelay;
 	}
 	
+	/**
+	 * Invoked when this verticle is deployed. (Life cycle method to start the verticle) 
+	 */
 	@Override
 	public void start() throws Exception {
 		//This timer will be caller every 12 seconds - log error and ignore any exceptions so that event loop will be intact

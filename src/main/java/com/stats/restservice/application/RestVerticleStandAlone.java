@@ -14,7 +14,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 /**
- * Stand Alone java class with main method to run from IDE directly 
+ * Stand Alone java class with main method to run the application from IDE directly 
  */
 public class RestVerticleStandAlone extends AbstractVerticle {
 	

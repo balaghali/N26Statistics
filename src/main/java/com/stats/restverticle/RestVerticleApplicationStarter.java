@@ -16,6 +16,9 @@ import io.vertx.core.logging.LoggerFactory;
  */
 public class RestVerticleApplicationStarter extends AbstractVerticle {
 	
+	/**
+	 * Invoked when this verticle is deployed. (Life cycle method to start the verticle) 
+	 */
 	@Override
 	public void start() {
 		Vertx vertx = Vertx.vertx();
